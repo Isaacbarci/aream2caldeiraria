@@ -54,7 +54,7 @@
     <h2>Cálculo de Área em m²</h2>
 
     <label>Largura (pol):</label>
-    <input type="text" id="diametro" placeholder='ex: 2 ou 2 1/2'>
+    <input type="text" id="diametro" placeholder='ex: 2 ou 2 1/2 | CHAPA (DEIXAR VAZIO)'>
 
     <label>Espessura (pol):</label>
     <input type="text" id="espessura" placeholder='ex: 1/4 ou 3/8'>
@@ -70,6 +70,7 @@
 
   <script>
     function parseFracao(valor) {
+      if (!valor) return null;
       if (valor.includes('/')) {
         let partes = valor.trim().split(' ');
         let total = 0;
@@ -87,11 +88,12 @@
     }
 
     function calcular() {
-      let diam = parseFracao(document.getElementById("diametro").value);
+      let diam_input = document.getElementById("diametro").value;
+      let diam = parseFracao(diam_input);
       let esp = parseFracao(document.getElementById("espessura").value);
       let comprimento = parseFloat(document.getElementById("quantidade").value) || 0;
 
-      let largura_m = diam * 25.4 / 1000;
+      let largura_m = diam ? diam * 25.4 / 1000 : 1.5;  // Assume 1.5 m se não for digitado nada
       let area_total = largura_m * comprimento;
       let qtd_barras = Math.ceil(area_total / 4.5);
 
