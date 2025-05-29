@@ -4,37 +4,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cálculo de Área (m²) - Polegadas</title>
+  <title>Calculadora de Aço</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      margin: 0;
       background: #f4f4f4;
     }
     .container {
-      max-width: 480px;
+      max-width: 500px;
       margin: auto;
       background: white;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h2 {
-      text-align: center;
-    }
-    label {
-      font-weight: bold;
-    }
-    input, button {
+    select, input, button {
       width: 100%;
       padding: 10px;
-      margin-top: 5px;
+      margin-top: 10px;
       margin-bottom: 15px;
       border: 1px solid #ccc;
       border-radius: 4px;
-      box-sizing: border-box;
       font-size: 1em;
+      box-sizing: border-box;
     }
     button {
       background-color: #007bff;
@@ -44,31 +37,63 @@
     button:hover {
       background-color: #0056b3;
     }
-    h3 {
-      font-size: 1.1em;
+    .section {
+      display: none;
+    }
+    h2, h3 {
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Cálculo de Área em m²</h2>
+    <h2>Calculadora de Aço</h2>
+    <label for="tipo">Tipo:</label>
+    <select id="tipo" onchange="mostrarFormulario()">
+      <option value="">Selecione...</option>
+      <option value="barra">Barra Chata</option>
+      <option value="chapa">Chapa</option>
+    </select>
 
-    <label>Largura (pol):</label>
-    <input type="text" id="diametro" placeholder='ex: 2 ou 2 1/2 | CHAPA (DEIXAR VAZIO)'>
+    <!-- Barra Chata -->
+    <div id="barra" class="section">
+      <label>Largura (pol):</label>
+      <input type="text" id="largura_barra" placeholder='ex: 2 ou 2 1/2 | CHAPA (DEIXAR VAZIO)'>
 
-    <label>Espessura (pol):</label>
-    <input type="text" id="espessura" placeholder='ex: 1/4 ou 3/8'>
+      <label>Espessura (pol):</label>
+      <input type="text" id="espessura_barra" placeholder='ex: 1/4 ou 3/8'>
 
-    <label>Quantidade (m):</label>
-    <input type="number" id="quantidade" placeholder='ex: 142.5'>
+      <label>Comprimento (m):</label>
+      <input type="number" id="comprimento_barra" placeholder='ex: 142.5'>
 
-    <button onclick="calcular()">Calcular</button>
+      <button onclick="calcularBarra()">Calcular Barra</button>
 
-    <h3>Resultado: <span id="resultado">0.00</span> m²</h3>
-    <h3>Quantidade de barras (4,5 m² cada): <span id="barras">0</span></h3>
+      <h3>Área total: <span id="resultado_barra">0.00</span> m²</h3>
+      <h3>Qtd barras (4,5 m²): <span id="barras_barra">0</span></h3>
+    </div>
+
+    <!-- Chapa -->
+    <div id="chapa" class="section">
+      <label>Quantidade de chapas:</label>
+      <input type="number" id="qtd_chapas" placeholder='ex: 4'>
+
+      <label>Dimensão de cada chapa (mm):</label>
+      <input type="text" id="dimensao_chapa" placeholder='ex: 200x200'>
+
+      <button onclick="calcularChapa()">Calcular Chapa</button>
+
+      <h3>Área total: <span id="resultado_chapa">0.00</span> m²</h3>
+       <h3>Quantidade de chapas (4,5 m² cada): <span id="barras_chapa">0</span></h3>
+    </div>
   </div>
 
   <script>
+    function mostrarFormulario() {
+      let tipo = document.getElementById("tipo").value;
+      document.getElementById("barra").style.display = tipo === "barra" ? "block" : "none";
+      document.getElementById("chapa").style.display = tipo === "chapa" ? "block" : "none";
+    }
+
     function parseFracao(valor) {
       if (!valor) return null;
       if (valor.includes('/')) {
@@ -87,18 +112,29 @@
       return parseFloat(valor);
     }
 
-    function calcular() {
-      let diam_input = document.getElementById("diametro").value;
-      let diam = parseFracao(diam_input);
-      let esp = parseFracao(document.getElementById("espessura").value);
-      let comprimento = parseFloat(document.getElementById("quantidade").value) || 0;
+    function calcularBarra() {
+      let largura = parseFracao(document.getElementById("largura_barra").value);
+      let comprimento = parseFloat(document.getElementById("comprimento_barra").value) || 0;
+      let largura_m = largura ? largura * 25.4 / 1000 : 1.5;
+      let area = largura_m * comprimento;
+      let qtd_barras = Math.ceil(area / 4.5);
+      document.getElementById("resultado_barra").innerText = area.toFixed(2);
+      document.getElementById("barras_barra").innerText = qtd_barras;
+    }
 
-      let largura_m = diam ? diam * 25.4 / 1000 : 1.5;  // Assume 1.5 m se não for digitado nada
-      let area_total = largura_m * comprimento;
-      let qtd_barras = Math.ceil(area_total / 4.5);
-
-      document.getElementById("resultado").innerText = area_total.toFixed(2);
-      document.getElementById("barras").innerText = qtd_barras;
+    function calcularChapa() {
+      let qtd = parseInt(document.getElementById("qtd_chapas").value) || 0;
+      let dimensao = document.getElementById("dimensao_chapa").value;
+      let partes = dimensao.toLowerCase().replace(' ', '').split('x');
+      if (partes.length !== 2) {
+        alert("Formato inválido. Use: largura x altura, ex: 200x200");
+        return;
+      }
+      let largura = parseFloat(partes[0]) / 1000;
+      let altura = parseFloat(partes[1]) / 1000;
+      let area_total = qtd * largura * altura;
+      document.getElementById("resultado_chapa").innerText = area_total.toFixed(2);
+       document.getElementById("barras_chapa").innerText = Math.ceil(area_total / 4.5);
     }
   </script>
 </body>
