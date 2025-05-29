@@ -3,28 +3,70 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cálculo de Área (m²) - Polegadas</title>
   <style>
-    body { font-family: Arial; padding: 20px; background: #f9f9f9; }
-    input { padding: 5px; margin: 5px 0; width: 200px; }
-    button { padding: 8px 12px; margin-top: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      background: #f4f4f4;
+    }
+    .container {
+      max-width: 480px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    label {
+      font-weight: bold;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 1em;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    h3 {
+      font-size: 1.1em;
+    }
   </style>
 </head>
 <body>
-  <h2>Cálculo de Área em m²</h2>
-  <label>Largura (pol):</label><br>
-  <input type="text" id="diametro" placeholder='ex: 2 ou 2 1/2'><br>
+  <div class="container">
+    <h2>Cálculo de Área em m²</h2>
 
-  <label>Espessura (pol):</label><br>
-  <input type="text" id="espessura" placeholder='ex: 1/4 ou 3/8'><br>
+    <label>Largura (pol):</label>
+    <input type="text" id="diametro" placeholder='ex: 2 ou 2 1/2'>
 
-  <label>Comprimento total (m):</label><br>
-  <input type="number" id="quantidade" placeholder='ex: 142.5'><br>
+    <label>Espessura (pol):</label>
+    <input type="text" id="espessura" placeholder='ex: 1/4 ou 3/8'>
 
-  <button onclick="calcular()">Calcular</button>
+    <label>Comprimento total (m):</label>
+    <input type="number" id="quantidade" placeholder='ex: 142.5'>
 
-  <h3>Resultado: <span id="resultado">0.00</span> m²</h3>
-  <h3>Quantidade de barras (4,5 m² cada): <span id="barras">0</span></h3>
+    <button onclick="calcular()">Calcular</button>
+
+    <h3>Resultado: <span id="resultado">0.00</span> m²</h3>
+    <h3>Quantidade de barras (4,5 m² cada): <span id="barras">0</span></h3>
+  </div>
 
   <script>
     function parseFracao(valor) {
@@ -50,7 +92,6 @@
       let comprimento = parseFloat(document.getElementById("quantidade").value) || 0;
 
       let largura_m = diam * 25.4 / 1000;
-
       let area_total = largura_m * comprimento;
       let qtd_barras = Math.ceil(area_total / 4.5);
 
